@@ -1,0 +1,114 @@
+USE eluktronics;
+
+CREATE TABLE `Brands`
+(
+ `BrandId`          int NOT NULL ,
+ `BrandDescription` varchar(45) NOT NULL ,
+
+PRIMARY KEY (`BrandId`)
+);
+
+CREATE TABLE `Customers`
+(
+ `CustomerId`  int NOT NULL ,
+ `CompanyName` varchar(45) NOT NULL ,
+ `ContactName` varchar(45) NOT NULL ,
+ `City`        varchar(45) NOT NULL ,
+ `State`       varchar(45) NOT NULL ,
+ `PostalCode`  varchar(10) NOT NULL ,
+ `PhoneNumber` varchar(15) NOT NULL ,
+
+PRIMARY KEY (`CustomerId`)
+);
+
+CREATE TABLE `Employees`
+(
+ `EmployeeId` int NOT NULL ,
+ `FirstName`  varchar(45) NOT NULL ,
+ `LastName`   varchar(45) NOT NULL ,
+ `Title`      varchar(45) NOT NULL ,
+ `WorkPhone`  varchar(15) NOT NULL ,
+
+PRIMARY KEY (`EmployeeId`)
+);
+
+CREATE TABLE `Shipping_Methods`
+(
+ `ShippingMethodId` int NOT NULL ,
+ `ShippingMethod`   varchar(45) NOT NULL ,
+
+PRIMARY KEY (`ShippingMethodId`)
+);
+
+CREATE TABLE `Payment_Method`
+(
+ `PaymentMethodId` int NOT NULL ,
+ `PaymentMethod`   varchar(45) NOT NULL ,
+
+PRIMARY KEY (`PaymentMethodId`)
+);
+
+CREATE TABLE `Products`
+(
+ `ProductId`   int NOT NULL ,
+ `BrandId`     int NOT NULL ,
+ `ProductName` varchar(45) NOT NULL ,
+
+PRIMARY KEY (`ProductId`),
+KEY `fkIdx_18` (`BrandId`),
+CONSTRAINT `FK_17` FOREIGN KEY `fkIdx_18` (`BrandId`) REFERENCES `Brands` (`BrandId`)
+);
+
+CREATE TABLE `Orders`
+(
+ `OrderId`          varchar(45) NOT NULL ,
+ `OrderDate`        datetime NOT NULL ,
+ `Quantity`         float NULL ,
+ `UnitPrice`        float NULL ,
+ `Discount`         float NULL ,
+ `ShippingMethodId` int NOT NULL ,
+ `EmployeeId`       int NOT NULL ,
+ `CustomerId`       int NOT NULL ,
+
+PRIMARY KEY (`OrderId`),
+KEY `fkIdx_66` (`ShippingMethodId`),
+CONSTRAINT `FK_65` FOREIGN KEY `fkIdx_66` (`ShippingMethodId`) REFERENCES `Shipping_Methods` (`ShippingMethodId`),
+KEY `fkIdx_69` (`CustomerId`),
+CONSTRAINT `FK_68` FOREIGN KEY `fkIdx_69` (`CustomerId`) REFERENCES `Customers` (`CustomerId`),
+KEY `fkIdx_72` (`EmployeeId`),
+CONSTRAINT `FK_71` FOREIGN KEY `fkIdx_72` (`EmployeeId`) REFERENCES `Employees` (`EmployeeId`)
+);
+
+CREATE TABLE `Payment`
+(
+ `PaymentMethodId`   int NOT NULL ,
+ `OrderId`           varchar(45) NOT NULL ,
+ `PaymentId`         varchar(45) NOT NULL ,
+ `PaymentAmount`     float NOT NULL ,
+ `PaymentDate`       datetime NOT NULL ,
+ `CreditCardNumber`  varchar(24) NULL ,
+ `CreditCardEXPDate` varchar(5) NULL ,
+ `CardHoldersName`   varchar(45) NULL ,
+
+PRIMARY KEY (`PaymentMethodId`, `OrderId`, `PaymentId`),
+KEY `fkIdx_40` (`PaymentMethodId`),
+CONSTRAINT `FK_39` FOREIGN KEY `fkIdx_40` (`PaymentMethodId`) REFERENCES `Payment_Method` (`PaymentMethodId`),
+KEY `fkIdx_87` (`OrderId`),
+CONSTRAINT `FK_86` FOREIGN KEY `fkIdx_87` (`OrderId`) REFERENCES `Orders` (`OrderId`)
+);
+
+CREATE TABLE `Order_Details`
+(
+ `OrderId`       varchar(45) NOT NULL ,
+ `ProductId`     int NOT NULL ,
+ `OrderDetailId` varchar(45) NOT NULL ,
+ `Quantity`      float NOT NULL ,
+ `UnitPrice`     float NOT NULL ,
+ `Discount`      float NULL ,
+
+PRIMARY KEY (`OrderId`, `ProductId`, `OrderDetailId`),
+KEY `fkIdx_56` (`ProductId`),
+CONSTRAINT `FK_55` FOREIGN KEY `fkIdx_56` (`ProductId`) REFERENCES `Products` (`ProductId`),
+KEY `fkIdx_90` (`OrderId`),
+CONSTRAINT `FK_89` FOREIGN KEY `fkIdx_90` (`OrderId`) REFERENCES `Orders` (`OrderId`)
+);

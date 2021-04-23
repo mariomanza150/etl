@@ -1,0 +1,122 @@
+USE BarnesNoble;
+
+IF NOT EXISTS (SELECT * FROM sys.tables t WHERE t.name='Author')
+CREATE TABLE [Author]
+(
+ [AuthorId]   int NOT NULL ,
+ [AuthorName] varchar(MAX) NOT NULL ,
+
+
+ CONSTRAINT [PK_author] PRIMARY KEY CLUSTERED ([AuthorId] ASC)
+);
+
+IF NOT EXISTS (SELECT * FROM sys.tables t WHERE t.name='Category')
+CREATE TABLE [Category]
+(
+ [CategoryId]          int NOT NULL ,
+ [CategoryDescription] varchar(MAX) NOT NULL ,
+
+
+ CONSTRAINT [PK_Category] PRIMARY KEY CLUSTERED ([CategoryId] ASC)
+);
+
+
+IF NOT EXISTS (SELECT * FROM sys.tables t WHERE t.name='Customer')
+CREATE TABLE [Customer]
+(
+ [CustomerId] int NOT NULL ,
+ [FirstName]  varchar(MAX) NOT NULL ,
+ [LastName]   varchar(MAX) NOT NULL ,
+ [ZipCode]    varchar(MAX) NOT NULL ,
+ [City]       varchar(MAX) NOT NULL ,
+ [State]      varchar(MAX) NOT NULL ,
+
+
+ CONSTRAINT [PK_customer] PRIMARY KEY CLUSTERED ([CustomerId] ASC)
+);
+
+IF NOT EXISTS (SELECT * FROM sys.tables t WHERE t.name='Book_Order')
+CREATE TABLE [Book_Order]
+(
+ [OrderId]    int NOT NULL ,
+ [CustomerId] int NOT NULL ,
+ [OrderDate]  datetime NOT NULL ,
+
+
+ CONSTRAINT [PK_book_order] PRIMARY KEY CLUSTERED ([OrderId] ASC),
+ CONSTRAINT [FK_29] FOREIGN KEY ([CustomerId])  REFERENCES [Customer]([CustomerId])
+);
+
+CREATE NONCLUSTERED INDEX [fkIdx_30] ON [Book_Order] 
+ (
+  [CustomerId] ASC
+ );
+
+IF NOT EXISTS (SELECT * FROM sys.tables t WHERE t.name='Book')
+CREATE TABLE [Book]
+(
+ [BookId]          int NOT NULL ,
+ [CategoryId]      int NOT NULL ,
+ [Title]           varchar(MAX) NOT NULL ,
+ [ISBN]            varchar(MAX) NOT NULL ,
+ [Year]            varchar(MAX) NOT NULL ,
+ [Price]           float NOT NULL ,
+ [NoPages]         int NULL ,
+ [BookDescription] varchar(MAX) NULL ,
+
+
+ CONSTRAINT [PK_book] PRIMARY KEY CLUSTERED ([BookId] ASC),
+ CONSTRAINT [FK_44] FOREIGN KEY ([CategoryId])  REFERENCES [Category]([CategoryId])
+);
+
+
+
+CREATE NONCLUSTERED INDEX [fkIdx_45] ON [Book] 
+ (
+  [CategoryId] ASC
+ );
+
+IF NOT EXISTS (SELECT * FROM sys.tables t WHERE t.name='Ordering')
+CREATE TABLE [Ordering]
+(
+ [BookId]  int NOT NULL ,
+ [OrderId] int NOT NULL ,
+ [Price]   float NOT NULL ,
+
+
+ CONSTRAINT [PK_ordering] PRIMARY KEY CLUSTERED ([BookId] ASC, [OrderId] ASC),
+ CONSTRAINT [FK_36] FOREIGN KEY ([OrderId])  REFERENCES [Book_Order]([OrderId]),
+ CONSTRAINT [FK_60] FOREIGN KEY ([BookId])  REFERENCES [Book]([BookId])
+);
+
+CREATE NONCLUSTERED INDEX [fkIdx_37] ON [Ordering] 
+ (
+  [OrderId] ASC
+ );
+
+CREATE NONCLUSTERED INDEX [fkIdx_61] ON [Ordering] 
+ (
+  [BookId] ASC
+ );
+
+IF NOT EXISTS (SELECT * FROM sys.tables t WHERE t.name='Author_Book')
+CREATE TABLE [Author_Book]
+(
+ [AuthorId] int NOT NULL ,
+ [BookId]   int NOT NULL ,
+
+
+ CONSTRAINT [PK_author_book] PRIMARY KEY CLUSTERED ([AuthorId] ASC, [BookId] ASC),
+ CONSTRAINT [FK_17] FOREIGN KEY ([AuthorId])  REFERENCES [Author]([AuthorId]),
+ CONSTRAINT [FK_55] FOREIGN KEY ([BookId])  REFERENCES [Book]([BookId])
+);
+
+CREATE NONCLUSTERED INDEX [fkIdx_18] ON [Author_Book] 
+ (
+  [AuthorId] ASC
+ );
+
+CREATE NONCLUSTERED INDEX [fkIdx_56] ON [Author_Book] 
+ (
+  [BookId] ASC
+ );
