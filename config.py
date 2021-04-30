@@ -1,7 +1,7 @@
 # Cambiar todos los parametros a los correspondientes
 
 winsql =  {
-    "string": "Driver={SQL Server}; Server=DESKTOP-SLN622U; User ID=mario; pwd=mario; Trusted_Connection=yes;"
+    "string": "Driver={SQL Server}; Server=DESKTOP-SLN622U; Trusted_Connection=yes;"
 }
     
 sql = {

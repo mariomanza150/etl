@@ -12,6 +12,7 @@ def file_gen(cat):
         space = space.readlines()
         return random.choice(space)
 
+# Genera datos de personas random, para clientes y empleados
 def person_gen():
     with open('people.txt', errors="ignore") as f:
         for line in f.readlines():
@@ -27,6 +28,7 @@ def person_gen():
                 'phone': str(number_gen(10))
             }
 
+# genera Datos de libros, al azar de el archivo books.txt
 def book_gen():
     with open('books.txt', errors="ignore") as f:
         for line in f.readlines():
@@ -47,6 +49,7 @@ def main():
     conn = pyodbc.connect(winsql['string']+"DATABASE=BarnesNoble;", autocommit=True)
     cur = conn.cursor()
 
+    # Definir datos "Estaticos"
     i = 0
     categories = ['Mysteries', 'Romance', 'Thrillers', 'Science Fiction', 'Fantasy', 'Historical Fiction']
     for cat in categories:
@@ -83,6 +86,7 @@ def main():
 
     cur = conn.cursor()
 
+    # definir datos "Estaticos"
     payments = ['Cash', 'Check', 'Credit Card', 'Debit Card']
     brands = {
         'eluktronics': ['RP15', 'RP17'],
@@ -92,32 +96,32 @@ def main():
 
     i = 0
     for pay in payments:
-        cur.execute(f"INSERT INTO Payment_Method (PaymentMethodId, PaymentMethod) VALUES ({i}, {pay})")
+        cur.execute(f"INSERT INTO Payment_Method (PaymentMethodId, PaymentMethod) VALUES ({i}, '{pay}')")
         i += 1
     
     i = 0
-    for ship in shipments:
-        cur.execute(f"INSERT INTO Shipping_Methods (ShippingMethodId, ShippingMethod) VALUES ({i}, {ship})")
+    for ship in shipping:
+        cur.execute(f"INSERT INTO Shipping_Methods (ShippingMethodId, ShippingMethod) VALUES ({i}, '{ship}')")
         i += 1
 
     i = 0
+    j = 0
     for name, prods in brands.items():
-        cur.execute(f"INSERT INTO Brands (BrandId, BrandDescription) VALUES ({i}, {key})")
+        cur.execute(f"INSERT INTO Brands (BrandId, BrandDescription) VALUES ({i}, '{name}')")
         conn.commit()
-        j = 0
         for prod in prods:
-            cur.execute(f"INSERT INTO Products (ProductId, BrandId, ProductName) VALUES ({j}, {i}, {key})")
+            cur.execute(f"INSERT INTO Products (ProductId, BrandId, ProductName) VALUES ({j}, {i}, '{prod}')")
             j += 1
         i += 1
     
     i = 0
     for p in person_gen():
-        cur.execute(f"INSERT INTO Customers (CustomerId, ContactName, CompanyName, City, State, ZipCode, PhoneNumber) VALUES ({i}, '{p['name'][1]}', '{p['name'][0]}', '{p['city']}', '{p['state']}', '{p['zipcode']}', '{p['phone']}');")
+        cur.execute(f"INSERT INTO Customers (CustomerId, ContactName, CompanyName, City, State, PostalCode, PhoneNumber) VALUES ({i}, '{p['name'][1][0:40]}', '{p['name'][0][0:40]}', '{p['city']}', '{p['state']}', '{p['zipcode']}', '{p['phone']}');")
         i += 1
     
     i = 0
     for p in person_gen():
-        cur.execute(f"INSERT INTO Employees (EmployeeId, FirstName, LastName, Title, WorkPhone) VALUES ({i}, '{p['name'][1]}', '{p['name'][0]}', '{p['title']}', '{p['phone']}');")
+        cur.execute(f"INSERT INTO Employees (EmployeeId, FirstName, LastName, Title, WorkPhone) VALUES ({i}, '{p['name'][1][0:40]}', '{p['name'][0][0:40]}', '{p['title']}', '{p['phone']}');")
         i += 1
 
     conn.commit()
