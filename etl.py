@@ -93,7 +93,7 @@ class Etl():
         if month > 9:
             quarter = 4
         try:
-            time_cur.insert_one("_id": date[0], "Month": month, "Quarter": quarter, "Year": year)
+            time_cur.insert_one({"_id": date[0], "Month": month, "Quarter": quarter, "Year": year})
         except Exception as ex:
             pass
 
