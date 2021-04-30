@@ -124,6 +124,7 @@ class Etl():
     def import_data(self):
         self.import_products()
         self.import_locations()
+        self.import_customers()
         self.import_sales()
 
 if __name__ == "__main__":
