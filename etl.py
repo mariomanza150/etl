@@ -13,7 +13,7 @@ class Etl():
                 password=sql['password'],
                 database='eluktronics'
             )
-        self.mongo = pymongo.MongoClient("mongodb://localhost:27017/")["myetl"]
+        self.mongo = pymongo.MongoClient(mongodb['conn'])["myetl"]
     
     # cargar datos a tabla Dim_Products, con identificador b y e para Books y Electronics respectivamente y evitar colisiones
     def import_products(self):

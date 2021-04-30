@@ -11,6 +11,7 @@ sql = {
 }
 
 mongodb = {
+    "conn": "mongodb://localhost:27017/"
 }
 
 # Apagar luego de correr setup.py por primera vez
