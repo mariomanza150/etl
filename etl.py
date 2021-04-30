@@ -80,7 +80,7 @@ class Etl():
     # Utilidad para cargar Dim_Time cuando la fecha no existe
     def time_insert(self, date):
         time_cur = self.mongo["Dim_Time"]
-        date = date.split(" ")[0]
+        date = date.strftime("%Y-%m-%d")
         raw = date.split("-")
         month = raw[1]
         year = raw[0]
@@ -93,7 +93,8 @@ class Etl():
         if month > 9:
             quarter = 4
         try:
-            time_cur.insert_one({"_id": date[0], "Month": month, "Quarter": quarter, "Year": year})
+            time_cur.insert_one({"_id": date, "Month": month, "Quarter": quarter, "Year": year})
+            return date
         except Exception as ex:
             pass
 
@@ -107,16 +108,16 @@ class Etl():
         electr_cur.execute("SELECT Orders.OrderId, Order_Details.OrderDetailId, Order_Details.ProductId, Customers.PostalCode, Orders.CustomerId, Orders.OrderDate, Order_Details.Quantity, Order_Details.UnitPrice, Order_Details.Discount FROM Orders INNER JOIN Order_Details ON Orders.OrderId=Order_Details.OrderId INNER JOIN Customers ON Orders.CustomerId=Customers.CustomerId;")
 
         for el in book_cur:
+            date = self.time_insert(el[5])
             try:
-                self.time_insert(el[5])
-                sales_cur.insert_one({"_id": f"{el[0]}b", "OrderDetailId": f"{el[1]}b", "ProductId": f"{el[1]}b", "PostalCode": el[3], "CustomerId": el[4], "Date": el[5], "Quantity": 1, "UnitPrice": el[6], "Discount": 0})
+                sales_cur.insert_one({"_id": f"{el[0]}b", "OrderDetailId": f"{el[1]}b", "ProductId": f"{el[1]}b", "PostalCode": el[3], "CustomerId": el[4], "Date": date, "Quantity": 1, "UnitPrice": el[6], "Discount": 0})
             except Exception as ex:
                 pass
 
         for el in electr_cur:
+            date = self.time_insert(el[5])
             try:
-                self.time_insert(el[5])
-                sales_cur.insert_one({"_id": f"{el[0]}b", "OrderDetailId": f"{el[1]}e", "ProductId": f"{el[2]}e", "PostalCode": el[3], "CustomerId": el[4], "Date": el[5], "Quantity": el[6], "UnitPrice": el[7], "Discount": el[8]})
+                sales_cur.insert_one({"_id": f"{el[0]}b", "OrderDetailId": f"{el[1]}e", "ProductId": f"{el[2]}e", "PostalCode": el[3], "CustomerId": el[4], "Date": date, "Quantity": el[6], "UnitPrice": el[7], "Discount": el[8]})
             except Exception as ex:
                 pass
     
