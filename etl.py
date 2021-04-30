@@ -82,7 +82,7 @@ class Etl():
         time_cur = self.mongo["Dim_Time"]
         date = date.strftime("%Y-%m-%d")
         raw = date.split("-")
-        month = raw[1]
+        month = int(raw[1])
         year = raw[0]
         if month <= 3:
             quarter = 1
